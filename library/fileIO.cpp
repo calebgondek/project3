@@ -4,13 +4,15 @@
 #include "../includes_usr/fileIO.h"
 using namespace std;
 
-const char CHAR_TO_SEARCH_FOR = ',';
+const char DIVIDER = ',';
+const std::string EMPTY_LINE = "";
 
 bool isEmpty(std::fstream &file) {
 	return file.peek() == std::ifstream::traits_type::eof();
 }
 
-/* clears, then loads books from the file filename
+/*
+ * clears, then loads books from the file filename
  * returns  COULD_NOT_OPEN_FILE if cannot open filename
  * 			NO_BOOKS_IN_LIBRARY if there are 0 entries in books
  * 			SUCCESS if all data is loaded
@@ -39,17 +41,17 @@ int loadBooks(std::vector<book> &books, const char *filename) {
 	while (!file.eof()) {
 		getline(file, line);
 
-		if (line == "") {
+		if (line == EMPTY_LINE) {
 			break;
 		}
 
 		std::stringstream ss(line);
 
-		getline(ss, id, CHAR_TO_SEARCH_FOR);
-		getline(ss, bookName, CHAR_TO_SEARCH_FOR);
-		getline(ss, author, CHAR_TO_SEARCH_FOR);
-		getline(ss, bookCheckOutState, CHAR_TO_SEARCH_FOR);
-		getline(ss, patronID, CHAR_TO_SEARCH_FOR);
+		getline(ss, id, DIVIDER);
+		getline(ss, bookName, DIVIDER);
+		getline(ss, author, DIVIDER);
+		getline(ss, bookCheckOutState, DIVIDER);
+		getline(ss, patronID, DIVIDER);
 
 		book newBook;
 		newBook.book_id = stoi(id);
@@ -64,7 +66,8 @@ int loadBooks(std::vector<book> &books, const char *filename) {
 	return SUCCESS;
 }
 
-/* serializes books to the file filename
+/*
+ * serializes books to the file filename
  * returns  COULD_NOT_OPEN_FILE if cannot open filename
  * 			NO_BOOKS_IN_LIBRARY if there are 0 entries books (do not create file)
  * 			SUCCESS if all data is saved
@@ -82,14 +85,15 @@ int saveBooks(std::vector<book> &books, const char *filename) {
 
 	for (std::vector<book>::iterator it = books.begin(); it != books.end();
 			++it) {
-		file << it->book_id << ',' << it->title << ',' << it->author << ','
-				<< it->state << ',' << it->loaned_to_patron_id << std::endl;
+		file << it->book_id << DIVIDER << it->title << DIVIDER << it->author << DIVIDER
+				<< it->state << DIVIDER << it->loaned_to_patron_id << std::endl;
 	}
 
 	return SUCCESS;
 }
 
-/* clears, then loads patrons from the file filename
+/*
+ * clears, then loads patrons from the file filename
  * returns  COULD_NOT_OPEN_FILE if cannot open filename
  * 			NO_PATRONS_IN_LIBRARY if there are 0 entries in patrons
  * 			SUCCESS if all data is loaded
@@ -117,13 +121,13 @@ int loadPatrons(std::vector<patron> &patrons, const char *filename) {
 		getline(file, line);
 		std::stringstream ss(line);
 
-		if (line == "") {
+		if (line == EMPTY_LINE) {
 			break;
 		}
 
-		getline(ss, patron_id, CHAR_TO_SEARCH_FOR);
-		getline(ss, patron_name, CHAR_TO_SEARCH_FOR);
-		getline(ss, booksCheckedOut, CHAR_TO_SEARCH_FOR);
+		getline(ss, patron_id, DIVIDER);
+		getline(ss, patron_name, DIVIDER);
+		getline(ss, booksCheckedOut, DIVIDER);
 
 		patron newPatron;
 		newPatron.patron_id = stoi(patron_id);
@@ -136,7 +140,8 @@ int loadPatrons(std::vector<patron> &patrons, const char *filename) {
 	return SUCCESS;
 }
 
-/* serializes patrons to the file filename
+/*
+ * serializes patrons to the file filename
  * returns  COULD_NOT_OPEN_FILE if cannot open filename
  * 			NO_PATRONS_IN_LIBRARY if there are 0 entries in patrons  (do not create file)
  * 			SUCCESS if all data is saved
@@ -154,7 +159,7 @@ int savePatrons(std::vector<patron> &patrons, const char *filename) {
 
 	for (std::vector<patron>::iterator it = patrons.begin();
 			it != patrons.end(); ++it) {
-		file << it->patron_id << ',' << it->name << ','
+		file << it->patron_id << DIVIDER << it->name << DIVIDER
 				<< it->number_books_checked_out << std::endl;
 	}
 
